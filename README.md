@@ -14,7 +14,7 @@ SuperDuperMenu is a project that aims to create a **super awesome menu** for you
 - Run: run your menu.
 
 ## Installation
-- Clone the repository and build it yourself: `git clone https://github.com/your-username/SuperDuperMenu.git`
+- Clone the repository and build it yourself: `git clone https://github.com/SonormaY/SuperDuperMenu.git`
 - Add to your project with dotnet cli: `dotnet add package Sonorma.SuperDuperMenu`
 
 ## Usage
