@@ -2,43 +2,43 @@
 
 public class SuperDuperMenu
 {
-    private readonly Dictionary<string, Action> _tasks = new();
-    public void AddTask(string taskName, Action task)
+    private readonly Dictionary<string, Action> _entries = new();
+    public void AddEntry(string entryName, Action task)
     {
-        if (_tasks.ContainsKey(taskName))
+        if (_entries.ContainsKey(entryName))
         {
             return;
         }
 
-        taskName = taskName.First().ToString().ToUpper() + taskName.Substring(1);
-        _tasks.Add(taskName, task);
+        entryName = entryName.First().ToString().ToUpper() + entryName.Substring(1);
+        _entries.Add(entryName, task);
     }
-    public void LoadTasks(Dictionary<string, Action> tasks)
+    public void LoadEntries(Dictionary<string, Action> entries)
     {
-        foreach (var task in tasks)
+        foreach (var entry in entries)
         {
-            AddTask(task.Key, task.Value);
+            AddEntry(entry.Key, entry.Value);
         }
     }
-    public void ClearTasks()
+    public void ClearEntries()
     {
-        _tasks.Clear();
+        _entries.Clear();
     }
-    public void DeleteTask(string taskName)
+    public void DeleteEntry(string entryName)
     {
-        if (_tasks.ContainsKey(taskName))
+        if (_entries.ContainsKey(entryName))
         {
-            _tasks.Remove(taskName);
+            _entries.Remove(entryName);
         }
     }
-    public SuperDuperMenu(Dictionary<string, Action> tasks)
+    public SuperDuperMenu(Dictionary<string, Action> entries)
     {
-        LoadTasks(tasks);
+        LoadEntries(entries);
     }
     public SuperDuperMenu(){}
     public void Run()
     {
-        this.AddTask("Exit", () => Environment.Exit(0));
+        this.AddEntry("Exit", () => Environment.Exit(0));
         int selectedTaskIndex = 0;
 
         while (true)
@@ -47,17 +47,17 @@ public class SuperDuperMenu
             Console.Clear();
             Console.CursorVisible = false;
 
-            for (int i = 0; i < _tasks.Count; i++)
+            for (int i = 0; i < _entries.Count; i++)
             {
                 Console.ResetColor();
                 if (i == selectedTaskIndex)
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine("-> " + _tasks.ElementAt(i).Key);
+                    Console.WriteLine("-> " + _entries.ElementAt(i).Key);
                 }
                 else
                 {
-                    Console.WriteLine("   " + _tasks.ElementAt(i).Key);
+                    Console.WriteLine("   " + _entries.ElementAt(i).Key);
                 }
             }
 
@@ -66,15 +66,15 @@ public class SuperDuperMenu
             switch (keyInfo.Key)
             {
                 case ConsoleKey.UpArrow:
-                    selectedTaskIndex = (selectedTaskIndex - 1 + _tasks.Count) % _tasks.Count;
+                    selectedTaskIndex = (selectedTaskIndex - 1 + _entries.Count) % _entries.Count;
                     break;
                 case ConsoleKey.DownArrow:
-                    selectedTaskIndex = (selectedTaskIndex + 1) % _tasks.Count;
+                    selectedTaskIndex = (selectedTaskIndex + 1) % _entries.Count;
                     break;
                 case ConsoleKey.Enter:
                     Console.Clear();
                     Console.CursorVisible = true;
-                    _tasks.ElementAt(selectedTaskIndex).Value();
+                    _entries.ElementAt(selectedTaskIndex).Value();
                     Console.ForegroundColor = ConsoleColor.DarkCyan;
                     Console.WriteLine("Press any key to return to the main menu...");
                     Console.CursorVisible = false;
