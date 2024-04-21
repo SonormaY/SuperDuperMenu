@@ -1,13 +1,20 @@
-﻿namespace SuperDuperMenuLib;
+﻿using System.Text.Json;
+
+namespace SuperDuperMenuLib;
 
 public class SuperDuperMenu
 {
+    public string Title { get; set; } = "Main menu";
+    public string ExitMessage { get; set; } = "Press any key to exit...";
+    public ConsoleColor ExitMessageColor { get; set; } = ConsoleColor.DarkCyan;
+    public ConsoleColor SelectionColor { get; set; } = ConsoleColor.Cyan;
+    public bool CursorVisible { get; set; } = false;
     private readonly Dictionary<string, Action> _entries = new();
-    public void AddEntry(string entryName, Action task)
+    public void AddEntry(string entryName, Action task, bool overwrite = false)
     {
-        if (_entries.ContainsKey(entryName))
+        if (_entries.ContainsKey(entryName) && !overwrite)
         {
-            return;
+            throw new ArgumentException("An entry with the same name already exists.");
         }
 
         entryName = entryName.First().ToString().ToUpper() + entryName.Substring(1);
@@ -31,6 +38,24 @@ public class SuperDuperMenu
             _entries.Remove(entryName);
         }
     }
+    public void SaveConfig(string path = "SDMConfig.json")
+    {
+        string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(path, json);
+    }
+    public void LoadConfig(string path = "SDMConfig.json")
+    {
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SuperDuperMenu config = JsonSerializer.Deserialize<SuperDuperMenu>(json);
+            this.Title = config.Title;
+            this.ExitMessage = config.ExitMessage;
+            this.ExitMessageColor = config.ExitMessageColor;
+            this.SelectionColor = config.SelectionColor;
+            this.CursorVisible = config.CursorVisible;
+        }
+    }
     public SuperDuperMenu(Dictionary<string, Action> entries)
     {
         LoadEntries(entries);
@@ -38,21 +63,22 @@ public class SuperDuperMenu
     public SuperDuperMenu(){}
     public void Run()
     {
-        this.AddEntry("Exit", () => Environment.Exit(0));
+        bool exit = false;
+        this.AddEntry("Exit", () => exit = true, true);
         int selectedTaskIndex = 0;
 
-        while (true)
+        while (!exit)
         {
-            Console.Title = "Main menu";
+            Console.Title = Title;
             Console.Clear();
-            Console.CursorVisible = false;
+            Console.CursorVisible = CursorVisible;
 
             for (int i = 0; i < _entries.Count; i++)
             {
                 Console.ResetColor();
                 if (i == selectedTaskIndex)
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.ForegroundColor = SelectionColor;
                     Console.WriteLine("-> " + _entries.ElementAt(i).Key);
                 }
                 else
@@ -75,8 +101,9 @@ public class SuperDuperMenu
                     Console.Clear();
                     Console.CursorVisible = true;
                     _entries.ElementAt(selectedTaskIndex).Value();
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.WriteLine("Press any key to return to the main menu...");
+                    if (exit) break;
+                    Console.ForegroundColor = ExitMessageColor;
+                    Console.WriteLine(ExitMessage);
                     Console.CursorVisible = false;
                     Console.ReadKey();
                     break;
