@@ -63,10 +63,10 @@ public class SuperDuperMenu
     public void Run()
     {
         bool exit = false;
-        this.AddEntry("Exit", () => exit = true, true);
+        this.AddEntry("Exit", () => Environment.Exit(0), true);
         int selectedTaskIndex = 0;
 
-        while (!exit)
+        while (true)
         {
             Console.Title = Title;
             Console.Clear();
