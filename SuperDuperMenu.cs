@@ -16,7 +16,6 @@ public class SuperDuperMenu
         {
             throw new ArgumentException("An entry with the same name already exists.");
         }
-
         entryName = entryName.First().ToString().ToUpper() + entryName.Substring(1);
         _entries.Add(entryName, task);
     }
