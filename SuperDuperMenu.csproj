@@ -14,5 +14,11 @@
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
+  <Target Name="CopyPackage" AfterTargets="Build">
+  <Copy
+    SourceFiles="bin\Debug\net8.0\SuperDuperMenu.dll"
+    DestinationFolder="..\SuperDuperMenu.Test"
+    />
+</Target>
 
 </Project>
